@@ -17,11 +17,14 @@ const server = http.createServer((req, res) => {
     const trimmedPath = path.replace(/^\/+|\/+$/g, "");
 
     // Get the query string as an object
-    const queryStringURL = parsedURL.searchParams.toString();
+    const queryStringURL = parsedURL.searchParams;
 
 
     // Get the Http method
     const method = req.method.toLowerCase();
+
+    // Get the headers as an object
+    const headers = req.headers;
 
     // Send the response
     res.end("Hello World\n");
@@ -32,7 +35,10 @@ const server = http.createServer((req, res) => {
         trimmedPath +
         " with this mehtod: " +
         method +
-        " with the query string: " + queryStringURL
+        " with the query string: " +
+        queryStringURL +
+        " with these headers: " +
+        headers
     );
 });
 
