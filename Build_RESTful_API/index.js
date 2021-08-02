@@ -17,7 +17,7 @@ const server = http.createServer((req, res) => {
     const trimmedPath = path.replace(/^\/+|\/+$/g, "");
 
     // Get the query string as an object
-    const queryStringURLIter = parsedURL.searchParams.toString();
+    const queryStringURL = parsedURL.searchParams.toString();
 
 
     // Get the Http method
@@ -32,7 +32,7 @@ const server = http.createServer((req, res) => {
         trimmedPath +
         " with this mehtod: " +
         method +
-        " with the query string: " + queryStringURLIter
+        " with the query string: " + queryStringURL
     );
 });
 
