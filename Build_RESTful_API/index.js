@@ -3,13 +3,44 @@
  */
 
 // Depedencies
+const fs = require("fs");
 const http = require("http");
+const https = require("https");
 const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
 const config = require("./config");
 
-// The server should respond to all request with a string
-const server = http.createServer((req, res) => {
+// Instanciation of the HTTP Server
+const httpServer = http.createServer((req, res) => {
+    unifiedServer(req, res);
+});
+
+// Start the HTTP server
+httpServer.listen(config.httpPort, () => {
+    console.log(
+        `The server is listening on PORT ${config.httpPort} in ${config.mode}`
+    );
+});
+
+// Instanciation of the HTTPS Server
+const httpsServerOptions = {
+    key: fs.readFileSync("./https/localhost.key"),
+    cert: fs.readFileSync("./https/localhost.cert"),
+};
+
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+    unifiedServer(req, res);
+});
+
+// Start the HTTPS server
+httpsServer.listen(config.httpsPort, () => {
+    console.log(
+        `The server is listening on PORT ${config.httpsPort} in ${config.mode}`
+    );
+});
+
+// All the server logic for both http and https
+const unifiedServer = (req, res) => {
     const baseURL = "http://" + req.headers.host + "/";
     // Get the URL and parse it
     const parsedURL = new url.URL(req.url, baseURL);
@@ -60,20 +91,15 @@ const server = http.createServer((req, res) => {
             const payloadString = JSON.stringify(payload);
 
             // Return the response
-            res.setHeader('Content-Type', 'application/json');
-            res.writeHead(statusCode)
+            res.setHeader("Content-Type", "application/json");
+            res.writeHead(statusCode);
             res.end(payloadString);
 
             // Log the request path
             console.log("Returning this response: " + statusCode, payloadString);
         });
     });
-});
-
-// Start the server 
-server.listen(config.port, () => {
-    console.log(`The server is listening on PORT ${config.port} in ${config.mode}`);
-});
+};
 
 // Define handlers
 const handlers = {};
@@ -91,5 +117,5 @@ handlers.notFound = (data, callback) => {
 
 // Define a request router
 const router = {
-    'sample': handlers.sample
+    sample: handlers.sample,
 };
